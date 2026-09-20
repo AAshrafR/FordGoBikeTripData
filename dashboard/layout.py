@@ -61,25 +61,11 @@ def _sections(show_map: bool):
         chart_card("top-end-stations"),
     ]
 
-    behaviour_cards = [
-        chart_card("age-duration-scatter"),
-        chart_card("duration-by-user"),
-    ]
-
-    # Both of these read station coordinates, so they follow the map.
+    # Reads station coordinates, so it follows the map.
     if show_map:
         station_cards.append(chart_card("station-imbalance"))
-        behaviour_cards.append(chart_card("distance-by-user"))
 
     return [
-        section(
-            "ACTIVITY",
-            [
-                chart_card("trips-by-hour", span=2),
-                chart_card("duration-distribution"),
-                chart_card("weekday-heatmap", span=3),
-            ],
-        ),
         section(
             "RIDERS",
             [
@@ -88,9 +74,22 @@ def _sections(show_map: bool):
                 chart_card("age-distribution"),
             ],
         ),
+        section(
+            "TRIP DURATION",
+            [
+                chart_card("duration-distribution"),
+                chart_card("duration-by-user", span=2),
+            ],
+        ),
         *geography,
         section("STATIONS", station_cards),
-        section("TRIP BEHAVIOUR", behaviour_cards),
+        section(
+            "TRIP BEHAVIOUR",
+            [
+                chart_card("age-duration-scatter", span=3 if not show_map else 2),
+            ]
+            + ([chart_card("distance-by-user")] if show_map else []),
+        ),
     ]
 
 

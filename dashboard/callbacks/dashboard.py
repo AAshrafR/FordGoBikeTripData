@@ -29,9 +29,7 @@ KPI_IDS = [
 ]
 
 FIGURE_IDS = [
-    "trips-by-hour",
     "duration-distribution",
-    "weekday-heatmap",
     "user-type-chart",
     "gender-chart",
     "age-distribution",
@@ -133,9 +131,7 @@ def register_callbacks(app, df: pd.DataFrame) -> None:
 
         # Lambdas so only the figures actually on the page get built.
         builders = {
-            "trips-by-hour": lambda: figures.trips_by_hour(trips),
             "duration-distribution": lambda: figures.duration_distribution(trips),
-            "weekday-heatmap": lambda: figures.weekday_hour_heatmap(trips),
             "user-type-chart": lambda: figures.trips_by_user_type(trips),
             "gender-chart": lambda: figures.gender_mix(trips),
             "age-distribution": lambda: figures.age_distribution(trips),

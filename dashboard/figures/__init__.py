@@ -6,11 +6,7 @@ No global state and no Dash imports, which means they can be called from a
 notebook or a test as easily as from a callback.
 """
 
-from dashboard.figures.activity import (
-    duration_distribution,
-    trips_by_hour,
-    weekday_hour_heatmap,
-)
+from dashboard.figures.activity import duration_distribution
 from dashboard.figures.behavior import (
     age_vs_duration,
     distance_by_user_type,
@@ -38,7 +34,5 @@ __all__ = [
     "style_figure",
     "style_map",
     "top_stations",
-    "trips_by_hour",
     "trips_by_user_type",
-    "weekday_hour_heatmap",
 ]

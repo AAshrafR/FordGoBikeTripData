@@ -37,25 +37,11 @@ REFERENCE_YEAR = 2019
 # them we skip the recomputation.
 ENGINEERED_FEATURES = {"member_age", "age_group", "trip_duration_min"}
 
-
-def _add_time_parts(df: pd.DataFrame) -> pd.DataFrame:
-    """Derive hour and weekday from the start timestamp.
-
-    The original dashboard split the timestamp string on ':' to get the hour,
-    which breaks the moment the format changes. Parsing once here is safer and
-    faster than doing string work inside every callback.
-    """
-
-    if "start_time" not in df.columns:
-        return df
-
-    started = pd.to_datetime(df["start_time"], errors="coerce")
-
-    df["start_hour"] = started.dt.hour
-    df["start_weekday"] = started.dt.day_name()
-    df["is_weekend"] = started.dt.dayofweek >= 5
-
-    return df
+# `start_time` / `end_time` are stored as MM:SS.f, not calendar timestamps —
+# there is no real date column in the source data. That rules out hour-of-day
+# and weekday features: parsing MM:SS.f as a clock time would silently produce
+# wrong hours, and there is nothing to derive a weekday from. The dashboard
+# works only with what the data actually contains: trip duration.
 
 
 @lru_cache(maxsize=1)
@@ -77,7 +63,6 @@ def get_trips() -> pd.DataFrame:
     if "trip_duration_min" not in df.columns:
         df["trip_duration_min"] = df["duration_sec"] / 60
 
-    df = _add_time_parts(df)
     df = add_trip_geometry(df)
 
     return df
