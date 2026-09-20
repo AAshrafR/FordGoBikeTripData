@@ -1,0 +1,918 @@
+/* ============================================================
+   Ford GoBike — Mobility Intelligence
+   Emerald dashboard theme
+
+   Two things to know before editing:
+   1. The palette below is mirrored in dashboard/config.py. Plotly can't read
+      CSS variables, so a colour change has to happen in both places.
+   2. Layout is driven by two grids — .dashboard-body (rail + content) and
+      .chart-grid (the cards). Almost every responsive change is a change to
+      one of those two.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+
+/* ============================================================
+   TOKENS
+   ============================================================ */
+
+:root {
+    --bg: #f4f7f6;
+    --surface: #ffffff;
+    --surface-soft: #eaf0ed;
+
+    --sidebar: #121e1a;
+    --sidebar-soft: #1d2e28;
+    --sidebar-border: #2c423b;
+    --sidebar-text: #a9b8b2;
+    --sidebar-muted: #7b8c85;
+
+    --text: #22332d;
+    --text-dark: #0d1714;
+    --muted: #5c7068;
+    --muted-light: #8e9e97;
+
+    --border: #dbe4e0;
+
+    --accent: #10b981;
+    --accent-deep: #047857;
+    --accent-soft: rgba(16, 185, 129, 0.12);
+
+    --contrast: #f59e0b;
+    --success: #059669;
+
+    --radius: 18px;
+    --radius-sm: 10px;
+
+    --shadow: 0 10px 30px rgba(18, 30, 26, 0.06);
+    --shadow-soft: 0 4px 18px rgba(18, 30, 26, 0.03);
+    --shadow-lift: 0 14px 34px rgba(18, 30, 26, 0.10);
+
+    --header-height: 78px;
+    --rail-width: 250px;
+
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* One body rule only. The original file declared body twice and the second
+   declaration quietly overrode the Inter stack with Arial. */
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Keyboard users need to see where they are. */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+
+/* ============================================================
+   APP CONTAINER
+   ============================================================ */
+
+.app-container {
+    min-height: 100vh;
+    background: var(--bg);
+}
+
+
+/* ============================================================
+   TOP HEADER
+   ============================================================ */
+
+.top-header {
+    height: var(--header-height);
+    display: grid;
+    grid-template-columns: 280px 1fr 220px;
+    align-items: center;
+    padding: 0 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-mark {
+    width: 39px;
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--text-dark);
+    color: #ffffff;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: var(--text-dark);
+}
+
+.brand-subtitle {
+    margin-top: 3px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.7px;
+    color: var(--muted-light);
+}
+
+.header-center {
+    text-align: center;
+}
+
+.header-title {
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--text-dark);
+}
+
+.header-description {
+    margin-top: 5px;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.status-label {
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    color: var(--muted-light);
+}
+
+.status-value {
+    margin-top: 3px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: var(--text-dark);
+}
+
+
+/* ============================================================
+   BODY GRID
+   ============================================================ */
+
+.dashboard-body {
+    display: grid;
+    grid-template-columns: var(--rail-width) minmax(0, 1fr);
+    min-height: calc(100vh - var(--header-height));
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.sidebar {
+    width: var(--rail-width);
+    padding: 30px 20px 22px;
+    background: var(--sidebar);
+    color: #ffffff;
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    margin-bottom: 27px;
+}
+
+.sidebar-eyebrow {
+    color: var(--accent);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.sidebar-title {
+    margin: 8px 0;
+    color: #ffffff;
+    font-size: 22px;
+    line-height: 1.15;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+}
+
+.sidebar-description {
+    margin: 0;
+    color: var(--sidebar-muted);
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.sidebar-filter {
+    margin-bottom: 20px;
+}
+
+.sidebar-filter-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--sidebar-text);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-divider {
+    height: 1px;
+    margin: 4px 0 22px;
+    background: var(--sidebar-border);
+}
+
+
+/* ------------------------------------------------------------
+   Dropdowns
+
+   dcc.Dropdown renders a react-select v1 tree, which is why these
+   selectors look dated. !important is needed because dcc ships its own
+   stylesheet after ours.
+   ------------------------------------------------------------ */
+
+.sidebar-dropdown {
+    width: 100%;
+    color: var(--text) !important;
+}
+
+.sidebar-dropdown .Select-control {
+    min-height: 42px;
+    background: #ffffff !important;
+    border: 1px solid transparent !important;
+    border-radius: var(--radius-sm) !important;
+    box-shadow: none !important;
+    transition: border-color 0.18s var(--ease);
+}
+
+.sidebar-dropdown.is-focused .Select-control,
+.sidebar-dropdown .Select-control:hover {
+    border-color: var(--accent) !important;
+}
+
+.sidebar-dropdown .Select-placeholder,
+.sidebar-dropdown .Select-value-label {
+    font-size: 11px;
+    line-height: 40px;
+}
+
+.sidebar-dropdown .Select-placeholder {
+    color: var(--muted) !important;
+}
+
+.sidebar-dropdown .Select-menu-outer {
+    background: #ffffff !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-sm) !important;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    z-index: 1100;
+}
+
+.sidebar-dropdown .Select-option {
+    background: #ffffff !important;
+    color: var(--text) !important;
+    font-size: 11px;
+    padding: 11px 12px;
+}
+
+.sidebar-dropdown .Select-option:hover,
+.sidebar-dropdown .Select-option.is-focused {
+    background: var(--surface-soft) !important;
+    color: var(--text) !important;
+}
+
+.sidebar-dropdown .Select-option.is-selected {
+    background: var(--accent) !important;
+    color: #ffffff !important;
+}
+
+
+/* ------------------------------------------------------------
+   Radio items and slider
+   ------------------------------------------------------------ */
+
+.sidebar-radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--sidebar-text);
+    font-size: 11px;
+    cursor: pointer;
+    transition: color 0.15s var(--ease);
+}
+
+.sidebar-radio-label:hover {
+    color: #ffffff;
+}
+
+.sidebar-radio-input {
+    accent-color: var(--accent);
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+}
+
+.sidebar-slider {
+    padding: 0 4px;
+}
+
+.sidebar-slider .rc-slider-rail {
+    background: var(--sidebar-border);
+}
+
+.sidebar-slider .rc-slider-track {
+    background: var(--accent);
+}
+
+.sidebar-slider .rc-slider-handle {
+    border-color: var(--accent);
+    background: var(--accent);
+    opacity: 1;
+    box-shadow: none;
+}
+
+.sidebar-slider .rc-slider-handle:hover,
+.sidebar-slider .rc-slider-handle:focus {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.sidebar-slider .rc-slider-dot {
+    display: none;
+}
+
+.sidebar-slider .rc-slider-mark-text {
+    color: var(--sidebar-muted);
+    font-size: 9px;
+}
+
+.sidebar-slider .rc-slider-mark-text-active {
+    color: var(--sidebar-text);
+}
+
+
+/* ------------------------------------------------------------
+   Dataset card and footer
+   ------------------------------------------------------------ */
+
+.sidebar-dataset {
+    padding: 16px;
+    background: var(--sidebar-soft);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 12px;
+}
+
+.sidebar-dataset-label {
+    margin-bottom: 7px;
+    color: var(--accent);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-dataset-title {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.sidebar-dataset-meta {
+    margin-top: 6px;
+    color: var(--sidebar-muted);
+    font-size: 9px;
+    line-height: 1.7;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--sidebar-muted);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1.3px;
+}
+
+.sidebar-footer span:last-child {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--success);
+}
+
+.ready-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--success);
+}
+
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+
+.main-content {
+    min-width: 0;
+    padding: 26px 26px 40px;
+    background: var(--bg);
+}
+
+.page-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.page-intro-left {
+    max-width: 850px;
+}
+
+.page-eyebrow {
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+}
+
+.page-eyebrow::first-letter {
+    color: var(--accent);
+}
+
+.page-title {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 0.98;
+    font-weight: 850;
+    letter-spacing: -0.045em;
+}
+
+.page-description {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.period-badge {
+    flex-shrink: 0;
+    padding: 9px 13px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-dark);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.3px;
+    box-shadow: var(--shadow-soft);
+}
+
+
+/* ============================================================
+   KPI ROW
+
+   auto-fit rather than a fixed four columns, so adding a sixth metric
+   doesn't require touching every breakpoint.
+   ============================================================ */
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 26px;
+}
+
+.kpi-card {
+    min-width: 0;
+    min-height: 104px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+}
+
+/* The left rule is the only thing marking the primary metric. */
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--border);
+}
+
+.kpi-card.kpi-highlight::before {
+    background: var(--accent);
+}
+
+.kpi-label {
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+}
+
+.kpi-value {
+    margin: 9px 0 5px;
+    color: var(--text-dark);
+    font-size: clamp(23px, 2.2vw, 31px);
+    line-height: 1;
+    font-weight: 850;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+}
+
+.kpi-highlight .kpi-value {
+    color: var(--accent-deep);
+}
+
+.kpi-foot {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   SECTION LABELS
+
+   A thin label bar, not a heading block. The explanatory paragraphs are
+   gone: each chart carries its own title, which is where a reader looks
+   anyway, and the prose was pushing the cards below the fold.
+   ============================================================ */
+
+.dashboard-section {
+    margin-bottom: 26px;
+}
+
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+}
+
+/* The rule runs out from the label to the right edge of the content. */
+.section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+
+/* ============================================================
+   CHART CARDS
+
+   Three columns. Cards declare their width with .span-1 / .span-2 /
+   .span-3 rather than each having its own modifier class.
+   ============================================================ */
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.span-1 { grid-column: span 1; }
+.span-2 { grid-column: span 2; }
+.span-3 { grid-column: span 3; }
+
+.chart-card {
+    min-width: 0;
+    min-height: 320px;
+    padding: 6px 8px 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+}
+
+.chart-card.chart-map {
+    min-height: 470px;
+    padding: 6px 6px 4px;
+}
+
+.chart-card .dash-graph,
+.chart-card .js-plotly-plot,
+.chart-card .plotly {
+    width: 100% !important;
+}
+
+.chart-card .js-plotly-plot:focus {
+    outline: none;
+}
+
+/* The modebar is clutter until it's wanted. */
+.chart-card .modebar {
+    opacity: 0;
+    transition: opacity 0.2s var(--ease);
+}
+
+.chart-card:hover .modebar,
+.chart-card:focus-within .modebar {
+    opacity: 0.55;
+}
+
+/* Plotly's map attribution sits flush against the card edge otherwise. */
+.chart-card.chart-map .maplibregl-ctrl-attrib,
+.chart-card.chart-map .mapboxgl-ctrl-attrib {
+    font-size: 9px;
+    border-radius: 6px 0 0 0;
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.footer {
+    min-height: 58px;
+    padding: 0 38px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+}
+
+
+/* ============================================================
+   SCROLLBARS
+   ============================================================ */
+
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--surface-soft);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c2cfc9;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a7b8b1;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: var(--sidebar);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--sidebar-border);
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #3f5b52;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1200px) {
+    :root {
+        --rail-width: 230px;
+    }
+
+    .top-header {
+        grid-template-columns: 240px 1fr 180px;
+        padding: 0 22px;
+    }
+
+    .main-content {
+        padding: 30px 26px 48px;
+    }
+}
+
+@media (max-width: 950px) {
+    .top-header {
+        grid-template-columns: 220px 1fr 160px;
+    }
+
+    .header-center {
+        display: none;
+    }
+
+    /* Two columns below this width; a third column of a bar chart at
+       ~280px each stops being readable. */
+    .chart-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .span-2,
+    .span-3 {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 750px) {
+    .top-header {
+        height: 70px;
+        grid-template-columns: 1fr auto;
+        padding: 0 17px;
+    }
+
+    /* The rail stops being a rail and becomes a panel above the content. */
+    .dashboard-body {
+        display: block;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        position: relative;
+        top: auto;
+        padding: 22px 20px;
+    }
+
+    .sidebar-header {
+        margin-bottom: 22px;
+    }
+
+    .sidebar-filter {
+        margin-bottom: 15px;
+    }
+
+    .sidebar-footer {
+        margin-top: 23px;
+    }
+
+    .main-content {
+        padding: 26px 18px 45px;
+    }
+
+    .page-intro {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    /* Single column on phones. */
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .span-1,
+    .span-2,
+    .span-3 {
+        grid-column: span 1;
+    }
+
+    .chart-card {
+        min-height: 320px;
+    }
+
+    .chart-card.chart-map {
+        min-height: 400px;
+    }
+
+    .footer {
+        padding: 0 18px;
+    }
+}
+
+@media (max-width: 520px) {
+    .top-header {
+        padding: 0 13px;
+    }
+
+    .brand-subtitle,
+    .header-status {
+        display: none;
+    }
+
+    .main-content {
+        padding: 22px 13px 40px;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .kpi-card {
+        min-height: 112px;
+    }
+
+    .page-title {
+        font-size: 34px;
+    }
+
+    .section-title {
+        font-size: 23px;
+    }
+
+    .chart-card {
+        min-height: 300px;
+    }
+
+    .footer span:last-child {
+        display: none;
+    }
+}
+
+
+/* ============================================================
+   MOTION PREFERENCE
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
