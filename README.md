@@ -53,7 +53,7 @@ From the project root:
 
 ```bash
 pip install -r requirements.txt
-python dashboard/app.py
+python run_dashboard.py
 ```
 
 Then open the local Dash address shown in the terminal.
